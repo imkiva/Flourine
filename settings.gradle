@@ -1,0 +1,4 @@
+rootProject.name = 'Flourine'
+include 'FlourineCore'
+findProject(':FlourineCore')?.name = 'flourine'
+
