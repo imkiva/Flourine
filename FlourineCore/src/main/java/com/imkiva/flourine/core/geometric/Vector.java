@@ -48,8 +48,7 @@ public class Vector {
     }
 
     public boolean isParallelTo(Vector other) {
-        return Double.compare(Math.abs(innerProduct(other)),
-                Math.abs(getModulus() * other.getModulus())) == 0;
+        return Double.compare(cosineOfAngel(other), 0) == 0;
     }
 
     public boolean isPerpendicularTo(Vector other) {
