@@ -48,12 +48,12 @@ public class Vector {
     }
 
     public boolean isParallelTo(Vector other) {
-        return Calculation.realEqual(Math.abs(innerProduct(other)),
-                Math.abs(getModulus() * other.getModulus()));
+        return Double.compare(Math.abs(innerProduct(other)),
+                Math.abs(getModulus() * other.getModulus())) == 0;
     }
 
     public boolean isPerpendicularTo(Vector other) {
-        return Calculation.realEqual(innerProduct(other), 0);
+        return Double.compare(innerProduct(other), 0) == 0;
     }
 
     public Vector reverse() {
