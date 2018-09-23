@@ -1,6 +1,6 @@
 package com.imkiva.flourine.core.geometric;
 
-import com.imkiva.flourine.core.misc.Calculation;
+import com.imkiva.flourine.core.misc.FastMath;
 
 import java.util.Objects;
 
@@ -27,18 +27,19 @@ public class Vector {
         coordinate = Point.of(end, -start.getX(), -start.getY(), -start.getZ());
     }
 
-    public void add(Vector other) {
-        coordinate = Point.of(coordinate, other.coordinate);
+    public Vector add(Vector other) {
+        return Point.of(coordinate, other.coordinate).toPositionVector();
     }
 
-    public void subtract(Vector other) {
-        add(other.reverse());
+    public Vector subtract(Vector other) {
+        return add(other.reverse());
     }
 
-    public void multiply(float number) {
-        coordinate = Point.of(number * getX(),
+    public Vector multiply(float number) {
+        return Point.of(number * getX(),
                 number * getY(),
-                number * getZ());
+                number * getZ())
+                .toPositionVector();
     }
 
     public float innerProduct(Vector other) {
@@ -62,15 +63,15 @@ public class Vector {
     }
 
     public float sineOf(Vector other) {
-        return Calculation.sqrt(1 - Calculation.square(cosineOf(other)));
+        return FastMath.sqrt(1 - FastMath.square(cosineOf(other)));
     }
 
     public boolean isParallelTo(Vector other) {
-        return Float.compare(cosineOf(other), 0) == 0;
+        return FastMath.equals(cosineOf(other), 1);
     }
 
     public boolean isPerpendicularTo(Vector other) {
-        return Float.compare(innerProduct(other), 0) == 0;
+        return FastMath.equals(innerProduct(other), 0);
     }
 
     public Vector reverse() {
@@ -104,5 +105,11 @@ public class Vector {
     @Override
     public int hashCode() {
         return Objects.hash(coordinate);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Vector(%.2f, %.2f, %.2f)",
+                getX(), getY(), getZ());
     }
 }

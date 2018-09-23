@@ -1,6 +1,6 @@
 package com.imkiva.flourine.core.geometric;
 
-import com.imkiva.flourine.core.misc.Calculation;
+import com.imkiva.flourine.core.misc.FastMath;
 
 import java.util.Objects;
 
@@ -34,10 +34,10 @@ public class Point {
     }
 
     public float distance(Point another) {
-        float tx = Calculation.square(getX() - another.getX());
-        float ty = Calculation.square(getY() - another.getY());
-        float tz = Calculation.square(getZ() - another.getZ());
-        return Calculation.sqrt(tx + ty + tz);
+        float tx = FastMath.square(getX() - another.getX());
+        float ty = FastMath.square(getY() - another.getY());
+        float tz = FastMath.square(getZ() - another.getZ());
+        return FastMath.sqrt(tx + ty + tz);
     }
 
     public float distanceFromOrigin() {
@@ -70,9 +70,9 @@ public class Point {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
-        return Float.compare(point.getX(), getX()) == 0 &&
-                Float.compare(point.getY(), getY()) == 0 &&
-                Float.compare(point.getZ(), getZ()) == 0;
+        return FastMath.equals(point.getX(), getX()) &&
+                FastMath.equals(point.getY(), getY()) &&
+                FastMath.equals(point.getZ(), getZ());
     }
 
     @Override
