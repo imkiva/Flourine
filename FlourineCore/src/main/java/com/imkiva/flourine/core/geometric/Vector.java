@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Vector {
     private Point coordinate;
 
-    public Vector(double x, double y, double z) {
+    public Vector(float x, float y, float z) {
         coordinate = new Point(x, y, z);
     }
 
@@ -27,38 +27,38 @@ public class Vector {
         add(other.reverse());
     }
 
-    public void multiply(double number) {
+    public void multiply(float number) {
         coordinate = new Point(number * getX(),
                 number * getY(),
                 number * getZ());
     }
 
-    public double innerProduct(Vector other) {
+    public float innerProduct(Vector other) {
         return getX() * other.getX()
                 + getY() * other.getY()
                 + getZ() * other.getZ();
     }
 
     public Vector crossProduct(Vector other) {
-        double normalX = this.getY() * other.getZ()
+        float normalX = this.getY() * other.getZ()
                 - this.getZ() * other.getY();
-        double normalY = this.getX() * other.getZ()
+        float normalY = this.getX() * other.getZ()
                 - this.getZ() * other.getX();
-        double normalZ = this.getX() * other.getY()
+        float normalZ = this.getX() * other.getY()
                 - this.getY() * other.getX();
         return new Vector(normalX, -normalY, normalZ);
     }
 
-    public double cosineOfAngel(Vector other) {
+    public float cosineOf(Vector other) {
         return innerProduct(other) / (getModulus() * other.getModulus());
     }
 
-    public double sineOfAngel(Vector other) {
-        return Math.sqrt(1 - Calculation.square(cosineOfAngel(other)));
+    public float sineOf(Vector other) {
+        return Calculation.sqrt(1 - Calculation.square(cosineOf(other)));
     }
 
     public boolean isParallelTo(Vector other) {
-        return Double.compare(cosineOfAngel(other), 0) == 0;
+        return Double.compare(cosineOf(other), 0) == 0;
     }
 
     public boolean isPerpendicularTo(Vector other) {
@@ -69,19 +69,19 @@ public class Vector {
         return new Vector(-getX(), -getY(), -getZ());
     }
 
-    public double getX() {
+    public float getX() {
         return coordinate.getX();
     }
 
-    public double getY() {
+    public float getY() {
         return coordinate.getY();
     }
 
-    public double getZ() {
+    public float getZ() {
         return coordinate.getZ();
     }
 
-    public double getModulus() {
+    public float getModulus() {
         return coordinate.distanceFromOrigin();
     }
 

@@ -11,11 +11,11 @@ import java.util.Objects;
 public class Point {
     public static final Point ORIGIN = new Point(0, 0, 0);
 
-    private double x;
-    private double y;
-    private double z;
+    private float x;
+    private float y;
+    private float z;
 
-    public Point(double x, double y, double z) {
+    public Point(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -25,18 +25,18 @@ public class Point {
         this(point, delta.getX(), delta.getY(), delta.getZ());
     }
 
-    public Point(Point point, double deltaX, double deltaY, double deltaZ) {
+    public Point(Point point, float deltaX, float deltaY, float deltaZ) {
         this(point.x + deltaX, point.y + deltaY, point.z + deltaZ);
     }
 
-    public double distance(Point another) {
-        double tx = Calculation.square(getX() - another.getX());
-        double ty = Calculation.square(getY() - another.getY());
-        double tz = Calculation.square(getZ() - another.getZ());
-        return Math.sqrt(tx + ty + tz);
+    public float distance(Point another) {
+        float tx = Calculation.square(getX() - another.getX());
+        float ty = Calculation.square(getY() - another.getY());
+        float tz = Calculation.square(getZ() - another.getZ());
+        return Calculation.sqrt(tx + ty + tz);
     }
 
-    public double distanceFromOrigin() {
+    public float distanceFromOrigin() {
         return distance(Point.ORIGIN);
     }
 
@@ -44,15 +44,15 @@ public class Point {
         return new Vector(Point.ORIGIN, this);
     }
 
-    public double getX() {
+    public float getX() {
         return x;
     }
 
-    public double getY() {
+    public float getY() {
         return y;
     }
 
-    public double getZ() {
+    public float getZ() {
         return z;
     }
 
@@ -66,9 +66,9 @@ public class Point {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
-        return Double.compare(point.getX(), getX()) == 0 &&
-                Double.compare(point.getY(), getY()) == 0 &&
-                Double.compare(point.getZ(), getZ()) == 0;
+        return Float.compare(point.getX(), getX()) == 0 &&
+                Float.compare(point.getY(), getY()) == 0 &&
+                Float.compare(point.getZ(), getZ()) == 0;
     }
 
     @Override
