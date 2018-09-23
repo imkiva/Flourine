@@ -39,6 +39,16 @@ public class Vector {
                 + getZ() * other.getZ();
     }
 
+    public Vector crossProduct(Vector other) {
+        double normalX = this.getY() * other.getZ()
+                - this.getZ() * other.getY();
+        double normalY = this.getX() * other.getZ()
+                - this.getZ() * other.getX();
+        double normalZ = this.getX() * other.getY()
+                - this.getY() * other.getX();
+        return new Vector(normalX, -normalY, normalZ);
+    }
+
     public double cosineOfAngel(Vector other) {
         return innerProduct(other) / (getModulus() * other.getModulus());
     }
