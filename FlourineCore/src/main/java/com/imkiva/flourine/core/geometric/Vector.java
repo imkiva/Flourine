@@ -11,16 +11,24 @@ import java.util.Objects;
 public class Vector {
     private Point coordinate;
 
-    public Vector(float x, float y, float z) {
-        coordinate = new Point(x, y, z);
+    public static Vector of(float x, float y, float z) {
+        return new Vector(x, y, z);
     }
 
-    public Vector(Point start, Point end) {
-        coordinate = new Point(end, -start.getX(), -start.getY(), -start.getZ());
+    public static Vector of(Point start, Point end) {
+        return new Vector(start, end);
+    }
+
+    private Vector(float x, float y, float z) {
+        coordinate = Point.of(x, y, z);
+    }
+
+    private Vector(Point start, Point end) {
+        coordinate = Point.of(end, -start.getX(), -start.getY(), -start.getZ());
     }
 
     public void add(Vector other) {
-        coordinate = new Point(coordinate, other.coordinate);
+        coordinate = Point.of(coordinate, other.coordinate);
     }
 
     public void subtract(Vector other) {
@@ -28,7 +36,7 @@ public class Vector {
     }
 
     public void multiply(float number) {
-        coordinate = new Point(number * getX(),
+        coordinate = Point.of(number * getX(),
                 number * getY(),
                 number * getZ());
     }
@@ -58,11 +66,11 @@ public class Vector {
     }
 
     public boolean isParallelTo(Vector other) {
-        return Double.compare(cosineOf(other), 0) == 0;
+        return Float.compare(cosineOf(other), 0) == 0;
     }
 
     public boolean isPerpendicularTo(Vector other) {
-        return Double.compare(innerProduct(other), 0) == 0;
+        return Float.compare(innerProduct(other), 0) == 0;
     }
 
     public Vector reverse() {

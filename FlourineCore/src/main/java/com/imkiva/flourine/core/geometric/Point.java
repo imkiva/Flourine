@@ -15,18 +15,22 @@ public class Point {
     private float y;
     private float z;
 
-    public Point(float x, float y, float z) {
+    public static Point of(float x, float y, float z) {
+        return new Point(x, y, z);
+    }
+
+    public static Point of(Point point, Point delta) {
+        return Point.of(point, delta.getX(), delta.getY(), delta.getZ());
+    }
+
+    public static Point of(Point point, float deltaX, float deltaY, float deltaZ) {
+        return Point.of(point.x + deltaX, point.y + deltaY, point.z + deltaZ);
+    }
+
+    private Point(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
-    }
-
-    public Point(Point point, Point delta) {
-        this(point, delta.getX(), delta.getY(), delta.getZ());
-    }
-
-    public Point(Point point, float deltaX, float deltaY, float deltaZ) {
-        this(point.x + deltaX, point.y + deltaY, point.z + deltaZ);
     }
 
     public float distance(Point another) {
@@ -41,7 +45,7 @@ public class Point {
     }
 
     public Vector toPositionVector() {
-        return new Vector(Point.ORIGIN, this);
+        return Vector.of(Point.ORIGIN, this);
     }
 
     public float getX() {
