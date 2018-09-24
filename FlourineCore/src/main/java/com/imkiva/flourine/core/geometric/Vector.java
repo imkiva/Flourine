@@ -67,7 +67,7 @@ public class Vector {
     }
 
     public boolean isParallelTo(Vector other) {
-        return FastMath.equals(cosineOf(other), 1);
+        return FastMath.equals(Math.abs(cosineOf(other)), 1);
     }
 
     public boolean isPerpendicularTo(Vector other) {

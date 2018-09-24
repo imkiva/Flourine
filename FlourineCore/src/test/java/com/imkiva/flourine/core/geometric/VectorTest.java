@@ -74,6 +74,9 @@ public class VectorTest {
         Vector c = Vector.of(0, 5, 5);
         Assert.assertTrue(a.isParallelTo(c));
 
+        Vector d = Vector.of(0, -5, -5);
+        Assert.assertTrue(a.isParallelTo(d));
+
         Vector b = Vector.of(1, 1, 0);
         Assert.assertFalse(a.isParallelTo(b));
     }
