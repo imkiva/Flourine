@@ -38,3 +38,5 @@ proguard/
 /captures
 .externalNativeBuild
 
+
+FlourineCore/src/main/java/com/imkiva/flourine/script/antlr
