@@ -47,11 +47,11 @@ public class PointValue extends LazyValue {
 
     @Override
     public String toString() {
-        return "{" +
+        return "(" +
                 Stream.of(expX, expY, expZ)
                         .filter(Objects::nonNull)
                         .map(m -> hasEvaluatedValue(m) ? evaluate(m).toString() : "_")
                         .collect(Collectors.joining(", ")) +
-                "}";
+                ")";
     }
 }
