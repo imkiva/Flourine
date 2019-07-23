@@ -64,7 +64,7 @@ primaryExpression : primaryPrefix primarySuffix*;
 
 primaryPrefix
     :   literalExpression
-    |   qoutedExpression
+    |   quotedExpression
     |   IDENTIFIER
     |   pointExpression
     |   listExpression
@@ -91,7 +91,7 @@ literalExpression
     |   BooleanLiteral
     ;
 
-qoutedExpression
+quotedExpression
     :   LPAREN orExpression RPAREN
     ;
 
