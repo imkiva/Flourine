@@ -114,7 +114,9 @@ public class ParserTest {
                 "\n" +
                 "let g = (0, 1, 0)" +
                 "\n" +
-                "let h = {a, b, c, e}");
+                "let h = (0, 1)" +
+                "\n" +
+                "let i = {a, b, c, e}");
         Parser parser = ParserFactory.fromSourceFile(sourceFile);
 
         TestLetVisitor visitor = new TestLetVisitor();
