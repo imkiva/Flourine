@@ -98,26 +98,35 @@ public class Interpreter {
             if (adds.size() > 1) {
                 Value right = visitAdditiveExpression(adds.get(1));
 
-                if (!left.isNumber() || !right.isNumber()) {
-                    throw new ScriptException("Cannot apply `>, <, >=, <=, ==, !=` to non-number expression");
+                if ((!left.isNumber() || !right.isNumber())
+                        && ctx.EQUAL() == null
+                        && ctx.NOTEQUAL() == null) {
+                    throw new ScriptException("Cannot apply `>, <, >=, <=` to non-number expression");
                 }
 
-                double l = ((double) left.getValue());
-                double r = ((double) right.getValue());
+                if (ctx.EQUAL() == null && ctx.NOTEQUAL() == null) {
+                    double l = ((double) left.getValue());
+                    double r = ((double) right.getValue());
+                    if (ctx.LT() != null) {
+                        return Value.of(Double.compare(l, r) < 0);
+                    } else if (ctx.LE() != null) {
+                        return Value.of(Double.compare(l, r) <= 0);
+                    } else if (ctx.GT() != null) {
+                        return Value.of(Double.compare(l, r) > 0);
+                    } else if (ctx.GE() != null) {
+                        return Value.of(Double.compare(l, r) >= 0);
+                    }
+                }
 
-                if (ctx.LT() != null) {
-                    return Value.of(Double.compare(l, r) < 0);
-                } else if (ctx.LE() != null) {
-                    return Value.of(Double.compare(l, r) <= 0);
-                } else if (ctx.GT() != null) {
-                    return Value.of(Double.compare(l, r) > 0);
-                } else if (ctx.GE() != null) {
-                    return Value.of(Double.compare(l, r) >= 0);
-                } else if (ctx.EQUAL() != null) {
-                    return Value.of(Double.compare(l, r) == 0);
+                if (left.getType() != right.getType()) {
+                    throw new ScriptException("Cannot apply `==, !=` to expressions that have different types");
+                }
+
+                if (ctx.EQUAL() != null) {
+                    return Value.of(left.getValue().equals(right.getValue()));
                 } else {
                     // NOT EQUAL
-                    return Value.of(Double.compare(l, r) != 0);
+                    return Value.of(!left.getValue().equals(right.getValue()));
                 }
             }
 

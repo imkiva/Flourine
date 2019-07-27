@@ -111,6 +111,22 @@ public class ParserTest {
         testExp("-10.111 < -5.999", t);
         testExp("+0 == -0", t);
         testExp("+0 != -0", f);
+        testExp("true == true", t);
+        testExp("true == false", f);
+    }
+
+    @Test(expected = ScriptException.class)
+    public void testRelationalExpressionEx1() {
+        Value t = Value.of(true);
+        Value f = Value.of(false);
+        testExp("true == 1", t);
+    }
+
+    @Test(expected = ScriptException.class)
+    public void testRelationalExpressionEx2() {
+        Value t = Value.of(true);
+        Value f = Value.of(false);
+        testExp("true > 4", t);
     }
 
     @Test
