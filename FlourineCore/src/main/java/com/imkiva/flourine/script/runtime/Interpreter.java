@@ -63,30 +63,32 @@ public class Interpreter {
         @Override
         public Value visitConditionalLogicExpression(FlourineScriptParser.ConditionalLogicExpressionContext ctx) {
             Value left = visitRelationalExpression(ctx.relationalExpression());
-            Value trueValue = Value.of(true);
-            Value falseValue = Value.of(false);
 
             List<ConditionalLogicExpressionRestContext> rests = ctx.conditionalLogicExpressionRest();
-            if (rests.size() > 0 && !left.isBool()) {
-                throw new ScriptException("Cannot apply `&&, ||` to non-bool expression");
-            }
-
-            for (ConditionalLogicExpressionRestContext rest : rests) {
-                RelationalExpressionContext rightExp = rest.relationalExpression();
-
-                boolean l = ((boolean) left.getValue());
-
-                if (rest.AND() != null) {
-                    left = l ? visitRelationalExpression(rightExp) : falseValue;
-                } else if (rest.OR() != null) {
-                    left = l ? trueValue : visitRelationalExpression(rightExp);
-                }
+            if (rests.size() > 0) {
+                Value trueValue = Value.of(true);
+                Value falseValue = Value.of(false);
 
                 if (!left.isBool()) {
                     throw new ScriptException("Cannot apply `&&, ||` to non-bool expression");
                 }
-            }
 
+                for (ConditionalLogicExpressionRestContext rest : rests) {
+                    RelationalExpressionContext rightExp = rest.relationalExpression();
+
+                    boolean l = ((boolean) left.getValue());
+
+                    if (rest.AND() != null) {
+                        left = l ? visitRelationalExpression(rightExp) : falseValue;
+                    } else if (rest.OR() != null) {
+                        left = l ? trueValue : visitRelationalExpression(rightExp);
+                    }
+
+                    if (!left.isBool()) {
+                        throw new ScriptException("Cannot apply `&&, ||` to non-bool expression");
+                    }
+                }
+            }
             return left;
         }
 
