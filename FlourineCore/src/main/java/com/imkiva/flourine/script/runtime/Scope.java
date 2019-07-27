@@ -29,6 +29,6 @@ public class Scope {
     public Value find(String name) {
         Value v = variables.get(name);
 
-        return v != null ? v : (parent == null ? null : parent.find(name));
+        return v == null ? (parent == null ? null : parent.find(name)) : v;
     }
 }
