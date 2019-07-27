@@ -16,14 +16,14 @@ import org.junit.Test;
  * @date 2019-07-23
  */
 public class ParserTest {
-    public void testExp(String exp, Value exptected) {
+    public void testExp(String exp, Value expected) {
         SourceFile sourceFile = SourceFileFactory.fromCode("let t = " + exp);
         Interpreter interpreter = new Interpreter();
         interpreter.evaluate(sourceFile);
 
         Scope scope = interpreter.getScope();
         Value t = scope.find("t");
-        Assert.assertEquals(t, exptected);
+        Assert.assertEquals(t, expected);
     }
 
     @Test
@@ -149,6 +149,14 @@ public class ParserTest {
 
         testExp("1 > 0 || 10", t);
         testExp("1 < 0 && 10", f);
+        testExp("true || 1", t);
+    }
+
+    @Test(expected = ScriptException.class)
+    public void testConditionalLogicExpressionEx1() {
+        Value t = Value.of(true);
+        Value f = Value.of(false);
+        testExp("1 && 2", f);
     }
 
     @Test
@@ -161,5 +169,10 @@ public class ParserTest {
 
         testExp("(1 > 0 || 10) ? 1 : 0", Value.of(1));
         testExp("(1 < 0 && 10) ? 1 : 0", Value.of(0));
+    }
+
+    @Test(expected = ScriptException.class)
+    public void testConditionalExpressionEx1() {
+        testExp("1 ? 1 : 0", Value.of(0));
     }
 }
