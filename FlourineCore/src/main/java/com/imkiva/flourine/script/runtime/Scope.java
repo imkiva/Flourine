@@ -12,7 +12,6 @@ import java.util.HashMap;
 public class Scope {
     private Scope parent;
     private HashMap<String, Value> variables;
-    private HashMap<ExpressionContext, Value> variableCache = new HashMap<>();
 
     public Scope(Scope parent) {
         this.parent = parent;
@@ -30,14 +29,6 @@ public class Scope {
     public Value find(String name) {
         Value v = variables.get(name);
 
-        return v != null ? v : findInParent(name);
-    }
-
-    public HashMap<ExpressionContext, Value> getVariableCache() {
-        return variableCache;
-    }
-
-    private Value findInParent(String name) {
-        return getParent() == null ? null : getParent().find(name);
+        return v != null ? v : (parent == null ? null : parent.find(name));
     }
 }
