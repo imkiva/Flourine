@@ -1,6 +1,7 @@
 package com.imkiva.flourine.script.runtime;
 
-import com.imkiva.flourine.script.types.Value;
+import com.imkiva.flourine.script.antlr.FlourineScriptParser.ExpressionContext;
+import com.imkiva.flourine.script.runtime.types.Value;
 
 import java.util.HashMap;
 
@@ -11,6 +12,7 @@ import java.util.HashMap;
 public class Scope {
     private Scope parent;
     private HashMap<String, Value> variables;
+    private HashMap<ExpressionContext, Value> variableCache = new HashMap<>();
 
     public Scope(Scope parent) {
         this.parent = parent;
@@ -29,6 +31,10 @@ public class Scope {
         Value v = variables.get(name);
 
         return v != null ? v : findInParent(name);
+    }
+
+    public HashMap<ExpressionContext, Value> getVariableCache() {
+        return variableCache;
     }
 
     private Value findInParent(String name) {

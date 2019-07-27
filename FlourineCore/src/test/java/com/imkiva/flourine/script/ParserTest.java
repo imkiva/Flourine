@@ -3,16 +3,18 @@ package com.imkiva.flourine.script;
 import com.imkiva.flourine.script.antlr.FlourineScriptBaseVisitor;
 import com.imkiva.flourine.script.antlr.FlourineScriptParser;
 import com.imkiva.flourine.script.antlr.FlourineScriptParser.ExpressionContext;
-import com.imkiva.flourine.script.file.SourceFile;
-import com.imkiva.flourine.script.file.SourceFileFactory;
 import com.imkiva.flourine.script.parser.Parser;
 import com.imkiva.flourine.script.parser.ParserFactory;
+import com.imkiva.flourine.script.parser.file.SourceFile;
+import com.imkiva.flourine.script.parser.file.SourceFileFactory;
 import com.imkiva.flourine.script.runtime.Parameter;
-import com.imkiva.flourine.script.types.Lambda;
-import com.imkiva.flourine.script.types.ListValue;
-import com.imkiva.flourine.script.types.PointValue;
-import com.imkiva.flourine.script.types.Value;
+import com.imkiva.flourine.script.runtime.Scope;
+import com.imkiva.flourine.script.runtime.types.Lambda;
+import com.imkiva.flourine.script.runtime.types.ListValue;
+import com.imkiva.flourine.script.runtime.types.PointValue;
+import com.imkiva.flourine.script.runtime.types.Value;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -24,12 +26,29 @@ import java.util.List;
  * @date 2019-07-23
  */
 public class ParserTest {
-    class TestLetVisitor extends FlourineScriptBaseVisitor {
+    static class TestLetVisitor extends FlourineScriptBaseVisitor {
+        private Scope scope;
+
+        public TestLetVisitor() {
+            this.scope = new Scope(null);
+        }
+
+        public Scope getScope() {
+            return scope;
+        }
+
+        @Override
+        public Value visitExpression(ExpressionContext ctx) {
+            return (Value) super.visitExpression(ctx);
+        }
+
         @Override
         public Object visitVariableDeclStatement(FlourineScriptParser.VariableDeclStatementContext ctx) {
             String varName = ctx.IDENTIFIER().getText();
-            Value value = (Value) visitExpression(ctx.expression());
+            Value value = visitExpression(ctx.expression());
             System.out.println("变量名: " + varName + ", 值: " + value.getValue() + ", 类型: " + value.getType().getSimpleName());
+            System.out.println("");
+            scope.set(varName, value);
             return super.visitVariableDeclStatement(ctx);
         }
 
@@ -37,7 +56,7 @@ public class ParserTest {
         public Object visitPrimaryPrefix(FlourineScriptParser.PrimaryPrefixContext ctx) {
             if (ctx.IDENTIFIER() != null) {
                 // TODO: find variable
-                return Value.of("@" + ctx.IDENTIFIER().getText());
+                return scope.find(ctx.IDENTIFIER().getText());
             }
             return super.visitPrimaryPrefix(ctx);
         }
@@ -71,15 +90,23 @@ public class ParserTest {
         @Override
         public Value visitPointExpression(FlourineScriptParser.PointExpressionContext ctx) {
             List<ExpressionContext> exps = ctx.expression();
+            Value x = visitExpression(exps.get(0));
+            Value y = visitExpression(exps.get(1));
             if (exps.size() == 3) {
-                return Value.of(new PointValue(exps.get(0), exps.get(1), exps.get(2)));
+                Value z = visitExpression(exps.get(2));
+                return Value.of(new PointValue(x, y, z));
             }
-            return Value.of(new PointValue(exps.get(0), exps.get(1), null));
+            return Value.of(new PointValue(x, y, null));
         }
 
         @Override
         public Value visitListExpression(FlourineScriptParser.ListExpressionContext ctx) {
-            return Value.of(new ListValue(ctx.expression()));
+            List<ExpressionContext> exps = ctx.expression();
+            List<Value> values = new ArrayList<>(exps.size());
+            for (ExpressionContext exp : exps) {
+                values.add(visitExpression(exp));
+            }
+            return Value.of(new ListValue(values));
         }
 
         @Override
@@ -116,10 +143,18 @@ public class ParserTest {
                 "\n" +
                 "let h = (0, 1)" +
                 "\n" +
-                "let i = {a, b, c, e}");
+                "let i = {a, b, c, e}" +
+                "\n" +
+                "let j = {g, h, i}");
         Parser parser = ParserFactory.fromSourceFile(sourceFile);
 
         TestLetVisitor visitor = new TestLetVisitor();
         visitor.visit(parser.compilationUnit());
+
+        Scope scope = visitor.getScope();
+        Value value = scope.find("j");
+        Assert.assertTrue(value.isList());
+        ListValue list = (ListValue) value.getValue();
+        System.out.println(list.toString());
     }
 }

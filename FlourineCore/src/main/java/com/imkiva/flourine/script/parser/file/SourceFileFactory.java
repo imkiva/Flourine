@@ -1,4 +1,4 @@
-package com.imkiva.flourine.script.file;
+package com.imkiva.flourine.script.parser.file;
 
 import java.io.File;
 import java.io.InputStream;

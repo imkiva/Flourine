@@ -1,4 +1,4 @@
-package com.imkiva.flourine.script.types;
+package com.imkiva.flourine.script.runtime.types;
 
 import com.imkiva.flourine.script.antlr.FlourineScriptParser;
 import com.imkiva.flourine.script.runtime.Parameter;

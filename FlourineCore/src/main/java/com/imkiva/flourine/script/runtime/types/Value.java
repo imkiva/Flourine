@@ -1,4 +1,4 @@
-package com.imkiva.flourine.script.types;
+package com.imkiva.flourine.script.runtime.types;
 
 import com.imkiva.flourine.script.runtime.ScriptConfig;
 
@@ -91,15 +91,46 @@ public class Value {
         return value;
     }
 
-    public boolean isNumericType() {
-        return isNumericType(type);
-    }
-
     private static boolean isNumericType(Class type) {
         return type == Double.class
                 || type == Short.class
                 || type == Long.class
                 || type == Integer.class
                 || type == Float.class;
+    }
+
+    public boolean isNumber() {
+        return isNumericType(type);
+    }
+
+    public boolean isChar() {
+        return type == TYPE_CHAR;
+    }
+
+    public boolean isBool() {
+        return type == TYPE_BOOL;
+    }
+
+    public boolean isPoint() {
+        return type == TYPE_POINT;
+    }
+
+    public boolean isList() {
+        return type == TYPE_LIST;
+    }
+
+    public boolean isLambda() {
+        return type == TYPE_LAMBDA;
+    }
+
+    @Override
+    public String toString() {
+        if (type == TYPE_CHAR) {
+            return "'" + value + "'";
+        }
+        if (type == TYPE_STRING) {
+            return "\"" + value + "\"";
+        }
+        return value.toString();
     }
 }

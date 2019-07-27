@@ -1,7 +1,7 @@
 package com.imkiva.flourine.script.parser;
 
 import com.imkiva.flourine.script.antlr.FlourineScriptLexer;
-import com.imkiva.flourine.script.file.SourceFile;
+import com.imkiva.flourine.script.parser.file.SourceFile;
 import com.imkiva.flourine.utils.Log;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
