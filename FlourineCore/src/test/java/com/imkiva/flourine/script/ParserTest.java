@@ -113,6 +113,14 @@ public class ParserTest {
         testExp("+0 != -0", f);
         testExp("true == true", t);
         testExp("true == false", f);
+        testExp("\"hello\" == \"hello\"", t);
+        testExp("\"hello\" != \"hello\"", f);
+        testExp("\"hello\" == \"world\"", f);
+        testExp("\"hello\" != \"world\"", t);
+        testExp("'A' == 'a'", f);
+        testExp("'A' != 'a'", t);
+        testExp("'a' != 'a'", f);
+        testExp("'a' == 'a'", t);
     }
 
     @Test(expected = ScriptException.class)
