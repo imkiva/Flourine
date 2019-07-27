@@ -4,6 +4,7 @@ import com.imkiva.flourine.script.antlr.FlourineScriptParser;
 import com.imkiva.flourine.script.runtime.Parameter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author kiva
@@ -24,6 +25,9 @@ public class Lambda {
 
     @Override
     public String toString() {
-        return "Lambda with " + parameters.size() + " argument(s)";
+        return "Lambda with " + parameters.size() + " argument(s): "
+                + parameters.stream()
+                .map(Parameter::getName)
+                .collect(Collectors.joining(", ", "(", ")"));
     }
 }

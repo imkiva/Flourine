@@ -27,7 +27,7 @@ public class ParserTest {
                 "\n" +
                 "let e = 'A'" +
                 "\n" +
-                "let f = [](r) -> { r * 2 }" +
+                "let f = [](a, b, c) -> { a * b * c }" +
                 "\n" +
                 "let g = (0, 1, 0)" +
                 "\n" +
@@ -43,7 +43,10 @@ public class ParserTest {
         Scope scope = interpreter.getScope();
         Value value = scope.find("j");
         Assert.assertTrue(value.isList());
-        ListValue list = (ListValue) value.getValue();
-        System.out.println(list.toString());
+        System.out.println(value.toString());
+
+        value = scope.find("f");
+        Assert.assertTrue(value.isLambda());
+        System.out.println(value.toString());
     }
 }
