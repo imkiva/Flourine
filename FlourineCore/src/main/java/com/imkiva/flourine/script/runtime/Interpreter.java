@@ -6,6 +6,8 @@ import com.imkiva.flourine.script.antlr.FlourineScriptParser.*;
 import com.imkiva.flourine.script.parser.Parser;
 import com.imkiva.flourine.script.parser.ParserFactory;
 import com.imkiva.flourine.script.parser.file.SourceFile;
+import com.imkiva.flourine.script.runtime.statement.LambdaCall;
+import com.imkiva.flourine.script.runtime.statement.ListVisit;
 import com.imkiva.flourine.script.runtime.types.Lambda;
 import com.imkiva.flourine.script.runtime.types.ListValue;
 import com.imkiva.flourine.script.runtime.types.PointValue;
@@ -236,18 +238,29 @@ public class Interpreter {
         /* primaryExpression begin */
         @Override
         public Value visitPrimaryExpression(FlourineScriptParser.PrimaryExpressionContext ctx) {
-            // TODO: apply suffixes to prefix
-            return (Value) super.visitPrimaryExpression(ctx);
+            Value result = visitPrimaryPrefix(ctx.primaryPrefix());
+
+            for (PrimarySuffixContext suffixContext : ctx.primarySuffix()) {
+                Object caller = visitPrimarySuffix(suffixContext);
+                if (caller instanceof LambdaCall) {
+                    // TODO: lambda call
+
+                } else if (caller instanceof ListVisit) {
+                    // TODO: list visit
+                }
+            }
+
+            return result;
         }
         /* primaryExpression end */
 
         /* primaryPrefix begin */
         @Override
-        public Object visitPrimaryPrefix(FlourineScriptParser.PrimaryPrefixContext ctx) {
+        public Value visitPrimaryPrefix(FlourineScriptParser.PrimaryPrefixContext ctx) {
             if (ctx.IDENTIFIER() != null) {
                 return scope.find(ctx.IDENTIFIER().getText());
             }
-            return super.visitPrimaryPrefix(ctx);
+            return (Value) super.visitPrimaryPrefix(ctx);
         }
 
         @Override
@@ -306,15 +319,18 @@ public class Interpreter {
 
         /* primarySuffix begin */
         @Override
-        public Object visitLambdaCallExpression(FlourineScriptParser.LambdaCallExpressionContext ctx) {
-            // TODO
-            return super.visitLambdaCallExpression(ctx);
+        public LambdaCall visitLambdaCallExpression(FlourineScriptParser.LambdaCallExpressionContext ctx) {
+            return new LambdaCall(visitArgumentList(ctx.argumentList()));
         }
 
         @Override
-        public Object visitListVisitExpression(FlourineScriptParser.ListVisitExpressionContext ctx) {
-            // TODO
-            return super.visitListVisitExpression(ctx);
+        public ListVisit visitListVisitExpression(FlourineScriptParser.ListVisitExpressionContext ctx) {
+            Value v = visitAdditiveExpression(ctx.additiveExpression());
+            if (!v.isNumber()) {
+                throw new ScriptException("Visit list by non-integer is not allowed");
+            }
+
+            return new ListVisit((int) (double) v.getValue());
         }
         /* primarySuffix end */
 
