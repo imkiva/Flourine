@@ -2,6 +2,8 @@ package com.imkiva.flourine.script.runtime.types;
 
 import com.imkiva.flourine.script.runtime.ScriptConfig;
 
+import java.util.Objects;
+
 /**
  * @author kiva
  * @date 2019-07-23
@@ -132,5 +134,18 @@ public class Value {
             return "\"" + value + "\"";
         }
         return value.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Value value1 = (Value) o;
+        return Objects.equals(getValue(), value1.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getValue());
     }
 }

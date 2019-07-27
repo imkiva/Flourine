@@ -24,35 +24,35 @@ expression
     ;
 
 conditionalExpression
-    :   conditionalOrExpression (QUESTION expression COLON expression)?
+    :   conditionalLogicExpression (QUESTION expression COLON expression)?
     ;
 
-conditionalOrExpression
-    :   conditionalAndExpression (OR conditionalAndExpression)*
+conditionalLogicExpression
+    :   relationalExpression conditionalLogicExpressionRest*
     ;
 
-conditionalAndExpression
-    :   orExpression (AND orExpression)*
-    ;
-
-orExpression
-    :   andExpression (OR andExpression)*
-    ;
-
-andExpression
-    :   relationalExpression (AND relationalExpression)*
+conditionalLogicExpressionRest
+    :   (AND | OR) relationalExpression
     ;
 
 relationalExpression
-    :   additiveExpression ((LT | GT | LE | GE) additiveExpression)*
+    :   additiveExpression ((LT | GT | LE | GE | EQUAL | NOTEQUAL) additiveExpression)?
     ;
 
 additiveExpression
-    :   multiplicativeExpression ((ADD | SUB) multiplicativeExpression)*
+    :   multiplicativeExpression additiveExpressionRest*
+    ;
+
+additiveExpressionRest
+    :   (ADD | SUB) multiplicativeExpression
     ;
 
 multiplicativeExpression
-    :   unaryExpression ((MUL | DIV | MOD | POWER) unaryExpression)*
+    :   unaryExpression multiplicativeExpressionRest*
+    ;
+
+multiplicativeExpressionRest
+    :   (MUL | DIV | MOD | POWER) unaryExpression
     ;
 
 unaryExpression
@@ -92,7 +92,7 @@ literalExpression
     ;
 
 quotedExpression
-    :   LPAREN orExpression RPAREN
+    :   LPAREN conditionalLogicExpression RPAREN
     ;
 
 pointExpression
