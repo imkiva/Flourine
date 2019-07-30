@@ -139,12 +139,6 @@ public class Value {
 
     @Override
     public String toString() {
-        if (type == TYPE_CHAR) {
-            return "'" + value + "'";
-        }
-        if (type == TYPE_STRING) {
-            return "\"" + value + "\"";
-        }
         return value.toString();
     }
 

@@ -13,9 +13,14 @@ public class BuiltinLambda {
     }
 
     static void init(FlourineScriptRuntime runtime) {
-        runtime.defineLambda("print", P("object"),
+        runtime.defineLambda("toString", P("object"),
                 args -> args.stream()
                         .map(Objects::toString)
                         .collect(Collectors.joining(", ")));
+
+        runtime.defineLambda("concat", P("object..."),
+                args -> args.stream()
+                        .map(Objects::toString)
+                        .collect(Collectors.joining()));
     }
 }
