@@ -1,7 +1,7 @@
 package com.imkiva.flourine.script.runtime;
 
-import com.imkiva.flourine.script.antlr.FlourineScriptParser.ExpressionContext;
 import com.imkiva.flourine.script.runtime.types.Value;
+import com.imkiva.flourine.utils.Pair;
 
 import java.util.HashMap;
 
@@ -24,6 +24,10 @@ public class Scope {
 
     public void set(String name, Value v) {
         variables.put(name, v);
+    }
+
+    public void set(Pair<Parameter, Value> pair) {
+        set(pair.getFirst().getName(), pair.getSecond());
     }
 
     public Value find(String name) {

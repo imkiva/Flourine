@@ -1,6 +1,6 @@
 package com.imkiva.flourine.script.runtime.types;
 
-import com.imkiva.flourine.script.antlr.FlourineScriptParser;
+import com.imkiva.flourine.script.antlr.FlourineScriptParser.LambdaBodyContext;
 import com.imkiva.flourine.script.runtime.Parameter;
 
 import java.util.List;
@@ -11,16 +11,30 @@ import java.util.stream.Collectors;
  * @date 2019-07-23
  */
 public class Lambda {
-    private List<Parameter> parameters;
-    FlourineScriptParser.LambdaBodyContext lambdaBody;
+    public interface Caller {
+        Value call(Value[] args);
+    }
 
-    public Lambda(List<Parameter> parameters, FlourineScriptParser.LambdaBodyContext lambdaBody) {
+    private List<Parameter> parameters;
+    private LambdaBodyContext lambdaBody;
+    private Caller caller;
+
+    public Lambda(List<Parameter> parameters, LambdaBodyContext lambdaBody, Caller caller) {
         this.parameters = parameters;
         this.lambdaBody = lambdaBody;
+        this.caller = caller;
     }
 
     public List<Parameter> getParameters() {
         return parameters;
+    }
+
+    public LambdaBodyContext getBody() {
+        return lambdaBody;
+    }
+
+    public Value call(Value[] args) {
+        return caller.call(args);
     }
 
     @Override

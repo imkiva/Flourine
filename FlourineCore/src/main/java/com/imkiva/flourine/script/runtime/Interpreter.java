@@ -22,11 +22,15 @@ import java.util.List;
  * @date 2019-07-26
  */
 public class Interpreter {
-    private static class InterpreterVisitor extends FlourineScriptBaseVisitor {
+    static class InterpreterVisitor extends FlourineScriptBaseVisitor {
         private Scope scope;
 
         InterpreterVisitor() {
-            this.scope = new Scope(null);
+            this(new Scope(null));
+        }
+
+        InterpreterVisitor(Scope scope) {
+            this.scope = scope;
         }
 
         Scope getScope() {
@@ -246,7 +250,16 @@ public class Interpreter {
                     // TODO: lambda call
 
                 } else if (caller instanceof ListVisit) {
-                    // TODO: list visit
+                    if (!result.isList()) {
+                        throw new ScriptException("Cannot visit non-list value with [index]");
+                    }
+                    int index = ((ListVisit) caller).getIndex();
+                    ListValue listValue = ((ListValue) result.getValue());
+                    if (index < 0 || index >= listValue.getSize()) {
+                        throw new ScriptException("Index " + index + " out of bounds: list size is "
+                                + listValue.getSize());
+                    }
+                    result = listValue.getItem(index);
                 }
             }
 
@@ -313,7 +326,10 @@ public class Interpreter {
         @Override
         public Value visitLambdaExpression(FlourineScriptParser.LambdaExpressionContext ctx) {
             FlourineScriptParser.ParameterListContext paramCtx = ctx.parameterList();
-            return Value.of(new Lambda(visitParameterList(paramCtx), ctx.lambdaBody()));
+            LambdaInterpreter interpreter = new LambdaInterpreter(getScope());
+            Lambda lambda = new Lambda(visitParameterList(paramCtx), ctx.lambdaBody(), interpreter);
+            interpreter.bind(lambda);
+            return Value.of(lambda);
         }
         /* primaryPrefix end */
 
@@ -350,6 +366,11 @@ public class Interpreter {
                 values.add(visitExpression(exp));
             }
             return values;
+        }
+
+        @Override
+        public Value visitLambdaBody(LambdaBodyContext ctx) {
+            return (Value) super.visitLambdaBody(ctx);
         }
     }
 

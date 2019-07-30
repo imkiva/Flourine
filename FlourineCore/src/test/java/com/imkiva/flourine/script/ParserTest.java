@@ -10,6 +10,8 @@ import com.imkiva.flourine.script.runtime.types.Value;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
+
 
 /**
  * @author kiva
@@ -174,5 +176,28 @@ public class ParserTest {
     @Test(expected = ScriptException.class)
     public void testConditionalExpressionEx1() {
         testExp("1 ? 1 : 0", Value.of(0));
+    }
+
+    @Test
+    public void testListVisit() {
+        testExp("{1, 2, 3, 4}[0]", Value.of(1));
+        testExp("{1, 2, 3, 4}[1]", Value.of(2));
+        testExp("{1, 2, 3, 4}[2]", Value.of(3));
+        testExp("{1, 2, 3, 4}[3]", Value.of(4));
+        testExp("{{'H'}, {'E'}, {'L'}, {'L'}, {'O'}}[0]", Value.of(new ListValue(Collections.singletonList(Value.of('H')))));
+        testExp("{{'H'}, {'E'}, {'L'}, {'L'}, {'O'}}[1]", Value.of(new ListValue(Collections.singletonList(Value.of('E')))));
+        testExp("{{'H'}, {'E'}, {'L'}, {'L'}, {'O'}}[2]", Value.of(new ListValue(Collections.singletonList(Value.of('L')))));
+        testExp("{{'H'}, {'E'}, {'L'}, {'L'}, {'O'}}[3]", Value.of(new ListValue(Collections.singletonList(Value.of('L')))));
+        testExp("{{'H'}, {'E'}, {'L'}, {'L'}, {'O'}}[4]", Value.of(new ListValue(Collections.singletonList(Value.of('O')))));
+    }
+
+    @Test(expected = ScriptException.class)
+    public void testListVisitEx1() {
+        testExp("{1, 2, 3, 4}[-1]", Value.of(1));
+    }
+
+    @Test(expected = ScriptException.class)
+    public void testListVisitEx2() {
+        testExp("{1, 2, 3, 4}[999]", Value.of(1));
     }
 }
