@@ -1,5 +1,7 @@
 package com.imkiva.flourine.script.runtime.types;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,6 +31,10 @@ public class PointValue {
 
     public Value getZ() {
         return z;
+    }
+
+    public List<Double> coordinates() {
+        return Arrays.asList(x.cast(), y.cast(), z == null ? 0.0 : z.cast());
     }
 
     @Override

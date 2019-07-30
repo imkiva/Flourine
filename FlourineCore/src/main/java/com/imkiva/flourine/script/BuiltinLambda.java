@@ -1,5 +1,8 @@
 package com.imkiva.flourine.script;
 
+import com.imkiva.flourine.script.runtime.types.PointValue;
+import com.imkiva.flourine.utils.FlourineStreams;
+
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -22,5 +25,14 @@ public class BuiltinLambda {
                 args -> args.stream()
                         .map(Objects::toString)
                         .collect(Collectors.joining()));
+
+        runtime.defineLambda("distance", P("point1", "point2"),
+                args -> {
+                    PointValue one = args.get(0).cast();
+                    PointValue two = args.get(1).cast();
+                    return FlourineStreams.zip(one.coordinates(), two.coordinates(), (a, b) -> Math.pow(a - b, 2))
+                            .reduce(Double::sum)
+                            .orElse(0.0);
+                });
     }
 }
