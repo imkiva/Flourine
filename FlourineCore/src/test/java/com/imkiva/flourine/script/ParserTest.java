@@ -200,4 +200,10 @@ public class ParserTest {
     public void testListVisitEx2() {
         testExp("{1, 2, 3, 4}[999]", Value.of(1));
     }
+
+    @Test
+    public void testLambdaCall() {
+        testExp("[](a) -> { a * a }(10)", Value.of(100));
+        testExp("[](a, b, c, f) -> { f(a, b, c) }(1, 2, 3, [](a, b, c) -> { a + b + c })", Value.of(6));
+    }
 }

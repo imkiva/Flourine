@@ -6,7 +6,6 @@ import com.imkiva.flourine.script.runtime.types.Value;
 import com.imkiva.flourine.utils.FlourineStreams;
 import com.imkiva.flourine.utils.Pair;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,12 +34,12 @@ public class LambdaInterpreter implements Lambda.Caller {
     }
 
     @Override
-    public Value call(Value[] args) {
-        if (args.length != parameterList.size()) {
+    public Value call(List<Value> args) {
+        if (args.size() != parameterList.size()) {
             throw new ScriptException("Argument size does not match");
         }
 
-        bindArguments(Arrays.asList(args));
+        bindArguments(args);
         return visitor.visitLambdaBody(lambdaBodyContext);
     }
 }

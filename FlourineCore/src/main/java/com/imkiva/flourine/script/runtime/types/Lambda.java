@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  */
 public class Lambda {
     public interface Caller {
-        Value call(Value[] args);
+        Value call(List<Value> args);
     }
 
     private List<Parameter> parameters;
@@ -33,7 +33,7 @@ public class Lambda {
         return lambdaBody;
     }
 
-    public Value call(Value[] args) {
+    public Value call(List<Value> args) {
         return caller.call(args);
     }
 

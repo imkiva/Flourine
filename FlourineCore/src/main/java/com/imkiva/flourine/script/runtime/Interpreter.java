@@ -247,7 +247,12 @@ public class Interpreter {
             for (PrimarySuffixContext suffixContext : ctx.primarySuffix()) {
                 Object caller = visitPrimarySuffix(suffixContext);
                 if (caller instanceof LambdaCall) {
-                    // TODO: lambda call
+                    if (!result.isLambda()) {
+                        throw new ScriptException("Cannot call non-lambda value");
+                    }
+                    List<Value> args = ((LambdaCall) caller).getArgumentList();
+                    Lambda lambda = ((Lambda) result.getValue());
+                    result = lambda.call(args);
 
                 } else if (caller instanceof ListVisit) {
                     if (!result.isList()) {
@@ -370,7 +375,8 @@ public class Interpreter {
 
         @Override
         public Value visitLambdaBody(LambdaBodyContext ctx) {
-            return (Value) super.visitLambdaBody(ctx);
+            ctx.statement().forEach(this::visitStatement);
+            return visitExpression(ctx.expression());
         }
     }
 
