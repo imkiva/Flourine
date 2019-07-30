@@ -8,10 +8,9 @@ import com.imkiva.flourine.script.parser.ParserFactory;
 import com.imkiva.flourine.script.parser.file.SourceFile;
 import com.imkiva.flourine.script.runtime.statement.LambdaCall;
 import com.imkiva.flourine.script.runtime.statement.ListVisit;
-import com.imkiva.flourine.script.runtime.types.Lambda;
-import com.imkiva.flourine.script.runtime.types.ListValue;
-import com.imkiva.flourine.script.runtime.types.PointValue;
-import com.imkiva.flourine.script.runtime.types.Value;
+import com.imkiva.flourine.script.runtime.types.*;
+import com.imkiva.flourine.utils.FlourineStreams;
+import com.imkiva.flourine.utils.Pair;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import java.util.List;
 public class Interpreter {
     static class InterpreterVisitor extends FlourineScriptBaseVisitor {
         private Scope scope;
+        private SolveOutput solveOutput;
 
         InterpreterVisitor() {
             this(new Scope(null));
@@ -37,6 +37,15 @@ public class Interpreter {
             return scope;
         }
 
+        SolveOutput getSolveOutput() {
+            return solveOutput;
+        }
+
+        void setSolveOutput(SolveOutput solveOutput) {
+            this.solveOutput = solveOutput;
+        }
+
+        /* statement begin */
         @Override
         public Object visitVariableDeclStatement(FlourineScriptParser.VariableDeclStatementContext ctx) {
             String varName = ctx.IDENTIFIER().getText();
@@ -44,6 +53,23 @@ public class Interpreter {
             scope.set(varName, value);
             return super.visitVariableDeclStatement(ctx);
         }
+
+        @Override
+        public Object visitSolveStatement(SolveStatementContext ctx) {
+            Value value = null;
+            if (ctx.IDENTIFIER() != null) {
+                value = getScope().find(ctx.IDENTIFIER().getText());
+            } else if (ctx.expression() != null) {
+                value = visitExpression(ctx.expression());
+            }
+            SolveOutput solveOutput = getSolveOutput();
+            if (solveOutput != null) {
+                solveOutput.solveOutput(value);
+            }
+            return super.visitSolveStatement(ctx);
+        }
+
+        /* statement end */
 
         /* expression begin */
         @Override
@@ -276,7 +302,7 @@ public class Interpreter {
         @Override
         public Value visitPrimaryPrefix(FlourineScriptParser.PrimaryPrefixContext ctx) {
             if (ctx.IDENTIFIER() != null) {
-                return scope.find(ctx.IDENTIFIER().getText());
+                return getScope().find(ctx.IDENTIFIER().getText());
             }
             return (Value) super.visitPrimaryPrefix(ctx);
         }
@@ -332,7 +358,7 @@ public class Interpreter {
         public Value visitLambdaExpression(FlourineScriptParser.LambdaExpressionContext ctx) {
             FlourineScriptParser.ParameterListContext paramCtx = ctx.parameterList();
             LambdaInterpreter interpreter = new LambdaInterpreter(getScope());
-            Lambda lambda = new Lambda(visitParameterList(paramCtx), ctx.lambdaBody(), interpreter);
+            ScriptLambda lambda = new ScriptLambda(visitParameterList(paramCtx), ctx.lambdaBody(), interpreter);
             interpreter.bind(lambda);
             return Value.of(lambda);
         }
@@ -380,10 +406,55 @@ public class Interpreter {
         }
     }
 
+    static class LambdaInterpreter implements ScriptLambda.Caller {
+        private Interpreter.InterpreterVisitor visitor;
+        private List<Parameter> parameterList;
+        private LambdaBodyContext lambdaBodyContext;
+
+        LambdaInterpreter(Scope declaringScope) {
+            Scope scope = new Scope(declaringScope);
+            visitor = new Interpreter.InterpreterVisitor(scope);
+        }
+
+        void bind(ScriptLambda lambda) {
+            parameterList = lambda.getParameters();
+            lambdaBodyContext = lambda.getBody();
+        }
+
+        private void bindArguments(List<Value> args) {
+            Scope scope = visitor.getScope();
+            FlourineStreams.zip(parameterList, args, Pair::new)
+                    .forEach(scope::set);
+        }
+
+        @Override
+        public Value call(List<Value> args) {
+            if (args.size() != parameterList.size()) {
+                throw new ScriptException("Argument size does not match");
+            }
+
+            bindArguments(args);
+            return visitor.visitLambdaBody(lambdaBodyContext);
+        }
+    }
+
     private InterpreterVisitor visitor;
 
     public Interpreter() {
         this.visitor = new InterpreterVisitor();
+    }
+
+    public Interpreter(Scope scope) {
+        this(scope, null);
+    }
+
+    public Interpreter(Scope scope, SolveOutput solveOutput) {
+        this.visitor = new InterpreterVisitor(scope);
+        setSolveOutput(solveOutput);
+    }
+
+    public void setSolveOutput(SolveOutput solveOutput) {
+        visitor.setSolveOutput(solveOutput);
     }
 
     public void evaluate(SourceFile sourceFile) {

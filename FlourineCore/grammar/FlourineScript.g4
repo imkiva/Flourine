@@ -2,7 +2,7 @@ grammar FlourineScript;
 
 // Parser
 compilationUnit
-    :   statement*
+    :   statement* EOF
     ;
 
 statement

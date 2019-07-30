@@ -32,6 +32,7 @@ public class Scope {
 
     public Value find(String name) {
         Value v = variables.get(name);
+//        System.out.println("find " + name + ": " + v);
 
         return v == null ? (parent == null ? null : parent.find(name)) : v;
     }

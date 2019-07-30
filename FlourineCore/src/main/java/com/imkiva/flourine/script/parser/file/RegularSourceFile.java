@@ -20,7 +20,7 @@ public class RegularSourceFile implements SourceFile {
 
     @Override
     public CharStream openCharStream() throws IOException {
-        return CharStreams.fromPath(Paths.get(sourceFile.toURI()));
+        return CharStreams.fromFileName(sourceFile.getAbsolutePath());
     }
 
     @Override

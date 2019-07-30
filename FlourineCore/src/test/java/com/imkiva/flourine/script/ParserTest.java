@@ -19,8 +19,9 @@ import java.util.Collections;
  */
 public class ParserTest {
     public void testExp(String exp, Value expected) {
+        FlourineScriptRuntime runtime = new FlourineScriptRuntime();
         SourceFile sourceFile = SourceFileFactory.fromCode("let t = " + exp);
-        Interpreter interpreter = new Interpreter();
+        Interpreter interpreter = runtime.newInterpreter();
         interpreter.evaluate(sourceFile);
 
         Scope scope = interpreter.getScope();
@@ -205,5 +206,10 @@ public class ParserTest {
     public void testLambdaCall() {
         testExp("[](a) -> { a * a }(10)", Value.of(100));
         testExp("[](a, b, c, f) -> { f(a, b, c) }(1, 2, 3, [](a, b, c) -> { a + b + c })", Value.of(6));
+    }
+
+    @Test
+    public void testFact5() {
+        testExp("[](f, a) -> { a == 1 ? 1 : a * f(f, a - 1) }([](f, a) -> { a == 1 ? 1 : a * f(f, a - 1) }, 5)", Value.of(120));
     }
 }

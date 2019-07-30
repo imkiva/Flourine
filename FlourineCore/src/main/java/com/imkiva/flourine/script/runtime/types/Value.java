@@ -70,11 +70,17 @@ public class Value {
             return of(Double.parseDouble(value.toString()));
         }
 
-        if (ScriptConfig.ENABLE_EXPORT_JAVA) {
+        if (ScriptConfig.ENABLE_EXPORT_JAVA
+                || value instanceof String
+                || value instanceof Boolean
+                || value instanceof Character
+                || value instanceof ListValue
+                || value instanceof PointValue
+                || value instanceof Lambda) {
             return new Value(value);
         }
 
-        throw new IllegalArgumentException("unsupported variable type " + value.getClass().getName());
+        throw new IllegalArgumentException("Unsupported variable type " + value.getClass().getName());
     }
 
     private Class type;
@@ -91,6 +97,11 @@ public class Value {
 
     public Object getValue() {
         return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T cast() {
+        return (T) getValue();
     }
 
     private static boolean isNumericType(Class type) {
@@ -121,8 +132,9 @@ public class Value {
         return type == TYPE_LIST;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean isLambda() {
-        return type == TYPE_LAMBDA;
+        return TYPE_LAMBDA.isAssignableFrom(type);
     }
 
     @Override
