@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.imkiva.flourine.gui.MainController"
+            style="-fx-background-color: #f4f4f4">
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <center>
+        <AnchorPane>
+            <padding>
+                <Insets top="8" right="8" bottom="8" left="8"/>
+            </padding>
+
+            <Text text="绘图区" fx:id="answerView" textAlignment="CENTER"
+                  AnchorPane.topAnchor="0.0"
+                  AnchorPane.bottomAnchor="0.0"
+                  AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0"
+                  style="-fx-font-size: 16px"/>
+        </AnchorPane>
+    </center>
+
+    <right>
+        <AnchorPane maxWidth="360" prefHeight="Infinity">
+            <VBox AnchorPane.topAnchor="0.0"
+                  AnchorPane.bottomAnchor="0.0"
+                  AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0"
+                  style="-fx-background-color: #eeeeee">
+                <padding>
+                    <Insets top="8" right="8" bottom="8" left="8"/>
+                </padding>
+
+                <Label text="Enter Your Question:">
+                    <padding>
+                        <Insets bottom="16"/>
+                    </padding>
+                </Label>
+
+                <TextArea  fx:id="codeEditor" prefHeight="10000" style="-fx-font-size: 18px"/>
+            </VBox>
+        </AnchorPane>
+    </right>
+
+</BorderPane>
