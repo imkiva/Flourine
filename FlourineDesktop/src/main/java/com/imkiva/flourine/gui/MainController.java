@@ -27,11 +27,9 @@ public class MainController implements Initializable {
         runtime.setSolveOutput(value ->
                 answerView.setText(value == null ? "" : value.toString()));
 
-        codeEditor.textProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                Interpreter interpreter = runtime.newInterpreter();
-                interpreter.evaluate(SourceFileFactory.fromCode(newValue));
-            });
-        });
+        codeEditor.textProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
+            Interpreter interpreter = runtime.newInterpreter();
+            interpreter.evaluate(SourceFileFactory.fromCode(newValue));
+        }));
     }
 }
