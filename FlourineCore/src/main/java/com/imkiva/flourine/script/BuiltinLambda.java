@@ -16,6 +16,9 @@ public class BuiltinLambda {
     }
 
     static void init(FlourineScriptRuntime runtime) {
+        runtime.defineVariable("pi", Math.PI);
+        runtime.defineVariable("e", Math.E);
+
         runtime.defineLambda("toString", P("object"),
                 args -> args.stream()
                         .map(Objects::toString)
@@ -33,6 +36,13 @@ public class BuiltinLambda {
                     return FlourineStreams.zip(one.coordinates(), two.coordinates(), (a, b) -> Math.pow(a - b, 2))
                             .reduce(Double::sum)
                             .orElse(0.0);
+                });
+
+        runtime.defineLambda("exit", P("exitCode?"),
+                args -> {
+                    int exitCode = args.size() >= 1 ? (int) (double) args.get(0).cast() : 0;
+                    System.exit(exitCode);
+                    return null;
                 });
     }
 }
