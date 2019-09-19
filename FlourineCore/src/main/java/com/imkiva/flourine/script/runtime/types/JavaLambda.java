@@ -11,19 +11,19 @@ import java.util.stream.Collectors;
  * @date 2019-07-30
  */
 public class JavaLambda extends Lambda {
-    public interface Caller {
+    public interface Body {
         Object call(List<Value> args);
     }
 
-    public static JavaLambda from(Caller caller, String[] parameters) {
-        return new JavaLambda(caller, parameters);
+    public static JavaLambda from(Body body, String[] parameters) {
+        return new JavaLambda(body, parameters);
     }
 
-    private Caller caller;
+    private Body body;
     private List<Parameter> parameters;
 
-    private JavaLambda(Caller caller, String[] parameters) {
-        this.caller = caller;
+    private JavaLambda(Body body, String[] parameters) {
+        this.body = body;
         this.parameters = Arrays.stream(parameters).map(Parameter::new).collect(Collectors.toList());
     }
 
@@ -34,6 +34,6 @@ public class JavaLambda extends Lambda {
 
     @Override
     public Value call(List<Value> args) {
-        return Value.of(caller.call(args));
+        return Value.of(body.call(args));
     }
 }

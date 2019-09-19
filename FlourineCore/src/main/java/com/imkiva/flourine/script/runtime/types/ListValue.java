@@ -23,6 +23,10 @@ public class ListValue {
         return items.size();
     }
 
+    public List<Value> getItems() {
+        return items;
+    }
+
     @Override
     public String toString() {
         return "{" +

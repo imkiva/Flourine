@@ -7,9 +7,6 @@ import com.imkiva.flourine.script.runtime.Scope;
 import com.imkiva.flourine.script.runtime.SolveOutput;
 import com.imkiva.flourine.script.runtime.types.*;
 
-import java.util.List;
-import java.util.function.Function;
-
 /**
  * @author kiva
  * @date 2019-07-30
@@ -29,7 +26,7 @@ public class FlourineScriptRuntime {
     private SolveOutput solveOutput;
 
     public FlourineScriptRuntime() {
-        BuiltinLambda.init(this);
+        BuiltinLambdas.loadInto(this);
     }
 
     public void setSolveOutput(SolveOutput solveOutput) {
@@ -51,8 +48,8 @@ public class FlourineScriptRuntime {
         interpreter.evaluate(sourceFile);
     }
 
-    public void defineLambda(String name, String[] parameters, JavaLambda.Caller caller) {
-        JavaLambda lambda = JavaLambda.from(caller, parameters);
+    public void defineLambda(String name, String[] parameters, JavaLambda.Body body) {
+        JavaLambda lambda = JavaLambda.from(body, parameters);
         globalScope.set(name, Value.of(lambda));
     }
 
