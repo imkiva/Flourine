@@ -1,5 +1,6 @@
 package com.imkiva.flourine.script.runtime.types;
 
+import com.imkiva.flourine.script.runtime.Argument;
 import com.imkiva.flourine.script.runtime.Parameter;
 
 import java.util.Arrays;
@@ -33,7 +34,8 @@ public class JavaLambda extends Lambda {
     }
 
     @Override
-    public Value call(List<Value> args) {
-        return Value.of(body.call(args));
+    public Value call(List<Argument> args) {
+        List<Value> values = args.stream().map(Argument::getArgumentValue).collect(Collectors.toList());
+        return Value.of(body.call(values));
     }
 }

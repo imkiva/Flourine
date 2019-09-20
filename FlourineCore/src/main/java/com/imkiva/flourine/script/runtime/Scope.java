@@ -26,14 +26,20 @@ public class Scope {
         variables.put(name, v);
     }
 
-    public void set(Pair<Parameter, Value> pair) {
-        set(pair.getFirst().getName(), pair.getSecond());
+    public void set(Parameter parameter, Argument argument) {
+        set(parameter, argument.getArgumentValue());
+    }
+
+    public void set(Parameter parameter, Value argument) {
+        set(parameter.getName(), argument);
+    }
+
+    public void set(Pair<Parameter, Argument> pair) {
+        set(pair.getFirst(), pair.getSecond());
     }
 
     public Value find(String name) {
         Value v = variables.get(name);
-//        System.out.println("find " + name + ": " + v);
-
         return v == null ? (parent == null ? null : parent.find(name)) : v;
     }
 }

@@ -112,11 +112,13 @@ lambdaBody
     ;
 
 argumentList
-    :   (expression (COMMA expression)*)?
+    :   (expression (COMMA expression)* (COMMA ELLIPSIS)?)?
+    |   (ELLIPSIS)?
     ;
 
 parameterList
-    :   (IDENTIFIER (COMMA IDENTIFIER)*)?
+    :   (IDENTIFIER (COMMA IDENTIFIER)* (COMMA ELLIPSIS)?)?
+    |   (ELLIPSIS)?
     ;
 
 // Lexer

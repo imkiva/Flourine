@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author kiva
@@ -276,7 +277,7 @@ public class Interpreter {
                     if (!result.isLambda()) {
                         throw new ScriptException("Cannot call non-lambda value");
                     }
-                    List<Value> args = ((LambdaCall) caller).getArgumentList();
+                    List<Argument> args = ((LambdaCall) caller).getArgumentList();
                     Lambda lambda = ((Lambda) result.getValue());
                     result = lambda.call(args);
 
@@ -286,9 +287,9 @@ public class Interpreter {
                     }
                     int index = ((ListVisit) caller).getIndex();
                     ListValue listValue = ((ListValue) result.getValue());
-                    if (index < 0 || index >= listValue.getSize()) {
+                    if (index < 0 || index >= listValue.size()) {
                         throw new ScriptException("Index " + index + " out of bounds: list size is "
-                                + listValue.getSize());
+                                + listValue.size());
                     }
                     result = listValue.getItem(index);
                 }
@@ -387,14 +388,23 @@ public class Interpreter {
             for (TerminalNode node : ctx.IDENTIFIER()) {
                 parameters.add(new Parameter(node.getText()));
             }
+            if (ctx.ELLIPSIS() != null) {
+                parameters.add(Parameter.VARARGS);
+            }
             return parameters;
         }
 
         @Override
-        public List<Value> visitArgumentList(ArgumentListContext ctx) {
-            List<Value> values = new ArrayList<>(ctx.expression().size());
+        public List<Argument> visitArgumentList(ArgumentListContext ctx) {
+            List<Argument> values = new ArrayList<>(ctx.expression().size());
             for (ExpressionContext exp : ctx.expression()) {
-                values.add(visitExpression(exp));
+                values.add(new Argument(visitExpression(exp)));
+            }
+            if (ctx.ELLIPSIS() != null) {
+                ListValue varargs = getScope().find(Parameter.VARARGS.getName()).cast();
+                varargs.stream()
+                        .map(Argument::new)
+                        .forEach(values::add);
             }
             return values;
         }
@@ -421,18 +431,70 @@ public class Interpreter {
             lambdaBodyContext = lambda.getBody();
         }
 
-        private void bindArguments(List<Value> args) {
+        private void bindArguments(List<Argument> args) {
+            if (hasVarargs()) {
+                bindVarargs(args);
+
+            } else {
+                bindNormalArgs(args);
+            }
+        }
+
+        private void bindNormalArgs(List<Argument> args) {
             Scope scope = visitor.getScope();
+
+            if (args.size() != parameterList.size()) {
+                throw new ScriptException("Argument size does not match: " +
+                        "expected "
+                        + parameterList.size()
+                        + ", but got "
+                        + args.size());
+            }
+
             FlourineStreams.zip(parameterList, args, Pair::new)
                     .forEach(scope::set);
         }
 
-        @Override
-        public Value call(List<Value> args) {
-            if (args.size() != parameterList.size()) {
-                throw new ScriptException("Argument size does not match");
+        private void bindVarargs(List<Argument> args) {
+            // construct a ListValue named <varargs> the rest of the argument
+            Scope scope = visitor.getScope();
+
+            int exactParamCount = parameterList.size() - 1;
+            if (exactParamCount > args.size()) {
+                throw new ScriptException("Argument count mismatch: " +
+                        "expected "
+                        + exactParamCount
+                        + " at least, but got "
+                        + args.size());
             }
 
+            List<Argument> varargValues = args.subList(exactParamCount, args.size());
+            scope.set(Parameter.VARARGS, Value.of(buildVarargValue(varargValues)));
+
+            List<Parameter> exactParams = parameterList.subList(0, exactParamCount);
+            List<Argument> exactArgs = args.subList(0, exactParamCount);
+            FlourineStreams.zip(exactParams, exactArgs, Pair::new)
+                    .forEach(scope::set);
+        }
+
+        private ListValue buildVarargValue(List<Argument> arguments) {
+            return new ListValue(
+                    arguments.stream()
+                            .map(Argument::getArgumentValue)
+                            .collect(Collectors.toList())
+            );
+        }
+
+        private boolean hasVarargs() {
+            if (parameterList.size() > 0) {
+                // We only allow the last parameter to be varargs
+                return parameterList.get(parameterList.size() - 1) == Parameter.VARARGS;
+            }
+            return false;
+        }
+
+        @Override
+        public Value call(List<Argument> args) {
             bindArguments(args);
             return visitor.visitLambdaBody(lambdaBodyContext);
         }

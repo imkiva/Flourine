@@ -39,10 +39,10 @@ public class MathLambdas extends LambdaBase {
                     }
 
                     int rows = rowList.size();
-                    int columns = rowList.get(0).getSize();
+                    int columns = rowList.get(0).size();
 
                     for (int i = 1; i < rows; i++) {
-                        if (rowList.get(i).getSize() != columns) {
+                        if (rowList.get(i).size() != columns) {
                             return Matrix.ZERO;
                         }
                     }
@@ -57,5 +57,10 @@ public class MathLambdas extends LambdaBase {
 
                     return matrix;
                 });
+
+        runtime.defineLambda("MatrixMultiply", P("lhs", "rhs"),
+                args -> args.stream()
+                        .map(t -> (Matrix) t.cast())
+                        .reduce(Matrix.UNIT, Matrix::multiply));
     }
 }

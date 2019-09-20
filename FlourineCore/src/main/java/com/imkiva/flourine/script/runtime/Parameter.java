@@ -5,6 +5,8 @@ package com.imkiva.flourine.script.runtime;
  * @date 2019-07-23
  */
 public class Parameter {
+    public static final Parameter VARARGS = new Parameter("<varargs>");
+
     private String name;
 
     public Parameter(String name) {

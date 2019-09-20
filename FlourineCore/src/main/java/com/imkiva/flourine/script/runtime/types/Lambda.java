@@ -1,5 +1,6 @@
 package com.imkiva.flourine.script.runtime.types;
 
+import com.imkiva.flourine.script.runtime.Argument;
 import com.imkiva.flourine.script.runtime.Parameter;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class Lambda {
     public abstract List<Parameter> getParameters();
 
-    public abstract Value call(List<Value> args);
+    public abstract Value call(List<Argument> args);
 
     @Override
     public String toString() {

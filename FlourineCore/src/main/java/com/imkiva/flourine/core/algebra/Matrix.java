@@ -14,6 +14,7 @@ public class Matrix {
     private double[][] data;
 
     public static Matrix ZERO = Matrix.zero(0);
+    public static Matrix UNIT = Matrix.zero(0);
 
     public static Matrix zero(Matrix target) {
         if (target == null) {
@@ -69,6 +70,7 @@ public class Matrix {
         return data[row][column];
     }
 
+    // Calculation
     public Matrix add(Matrix other) {
         if (other == ZERO) {
             return this.slowCopy();
@@ -102,6 +104,14 @@ public class Matrix {
     }
 
     public Matrix multiply(Matrix other) {
+        if (this == UNIT) {
+            return other.slowCopy();
+        }
+
+        if (other == UNIT) {
+            return this.slowCopy();
+        }
+
         if (other == ZERO) {
             return zero(this);
         }
@@ -119,6 +129,8 @@ public class Matrix {
         }
         return matrix;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
 
     private double matrixMultiply(Matrix lhs, Matrix rhs, int i, int j, int p) {
         double sum = 0;

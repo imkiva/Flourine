@@ -1,6 +1,7 @@
 package com.imkiva.flourine.script.runtime.types;
 
 import com.imkiva.flourine.script.antlr.FlourineScriptParser;
+import com.imkiva.flourine.script.runtime.Argument;
 import com.imkiva.flourine.script.runtime.Parameter;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class ScriptLambda extends Lambda {
     public interface Caller {
-        Value call(List<Value> args);
+        Value call(List<Argument> args);
     }
 
     private List<Parameter> parameters;
@@ -30,7 +31,7 @@ public class ScriptLambda extends Lambda {
     }
 
     @Override
-    public Value call(List<Value> args) {
+    public Value call(List<Argument> args) {
         return caller.call(args);
     }
 
