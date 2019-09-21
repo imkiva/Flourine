@@ -6,5 +6,5 @@ let myJoin = [](delimiter, head, ...) -> {
                  myJoin(delimiter, ...))
 }
 
-solve join(", ", 1, 2, 3)
+solve   join(", ", 1, 2, 3)
 solve myJoin(", ", 1, 2, 3)
