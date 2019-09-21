@@ -11,14 +11,25 @@ import java.util.stream.Collectors;
  */
 public class StringLambdas extends LambdaBase {
     public static void loadInto(FlourineScriptRuntime runtime) {
-        runtime.defineLambda("toString", P("object"),
+        runtime.defineLambda("toString", P("object..."),
                 args -> args.stream()
                         .map(Objects::toString)
                         .collect(Collectors.joining(", ")));
+
+        runtime.defineLambda("println", P("object..."),
+                args -> args.stream()
+                        .map(Objects::toString)
+                        .collect(Collectors.joining()));
 
         runtime.defineLambda("concat", P("object..."),
                 args -> args.stream()
                         .map(Objects::toString)
                         .collect(Collectors.joining()));
+
+        runtime.defineLambda("join", P("delimiter", "object..."),
+                args -> args.stream()
+                        .skip(1)
+                        .map(Objects::toString)
+                        .collect(Collectors.joining(args.get(0).cast())));
     }
 }
