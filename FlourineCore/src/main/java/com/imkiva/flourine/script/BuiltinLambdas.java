@@ -1,5 +1,6 @@
 package com.imkiva.flourine.script;
 
+import com.imkiva.flourine.script.builtin.CollectionLambdas;
 import com.imkiva.flourine.script.builtin.MathLambdas;
 import com.imkiva.flourine.script.builtin.StringLambdas;
 import com.imkiva.flourine.script.builtin.SystemLambdas;
@@ -13,5 +14,6 @@ class BuiltinLambdas {
         StringLambdas.loadInto(runtime);
         MathLambdas.loadInto(runtime);
         SystemLambdas.loadInto(runtime);
+        CollectionLambdas.loadInto(runtime);
     }
 }

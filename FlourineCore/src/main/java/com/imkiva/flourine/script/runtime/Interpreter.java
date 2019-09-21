@@ -303,7 +303,12 @@ public class Interpreter {
         @Override
         public Value visitPrimaryPrefix(FlourineScriptParser.PrimaryPrefixContext ctx) {
             if (ctx.IDENTIFIER() != null) {
-                return getScope().find(ctx.IDENTIFIER().getText());
+                Value value = getScope().find(ctx.IDENTIFIER().getText());
+                if (value == null) {
+                    throw new ScriptException("Variable not found: " +
+                            ctx.IDENTIFIER().getText());
+                }
+                return value;
             }
             return (Value) super.visitPrimaryPrefix(ctx);
         }
